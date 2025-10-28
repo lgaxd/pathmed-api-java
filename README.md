@@ -1,18 +1,18 @@
-## Getting Started
+# PathMed - Sistema de Telemedicina 🏥
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+> ⚠️ **WORK IN PROGRESS** - Projeto em desenvolvimento ativo
 
-## Folder Structure
+## 📋 Sobre o Projeto
 
-The workspace contains two folders by default, where:
+Sistema de telemedicina desenvolvido em Java para agendamento e gerenciamento de consultas online entre pacientes e profissionais de saúde.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## 🎯 Objetivo
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+Conectar pacientes com profissionais de saúde através de consultas remotas, oferecendo uma experiência digital completa do agendamento à realização da consulta.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## 🏗️ Tecnologias
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- **Java 17** - Linguagem principal
+- **Oracle Database** - Banco de dados
+- **JDBC** - Conexão com banco
+- **Arquitetura 3 camadas** - Model, DAO, Service
