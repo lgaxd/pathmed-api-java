@@ -34,7 +34,7 @@ public class Main {
         registro.setDataNascimento(LocalDate.of(1990, 5, 15));
         registro.setTipoSanguineo("A+");
         registro.setEmail("joao.silva." + System.currentTimeMillis() + "@email.com");
-        registro.setTelefone("11987654321");
+        registro.setTelefone("11992796717");
         registro.setUsuario("joao.silva." + System.currentTimeMillis());
         registro.setSenha("senha123");
 

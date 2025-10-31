@@ -29,6 +29,8 @@ public class AuthDAO {
         System.out.println("  CPF existe: " + verificarCpfExistente(request.getCpfPaciente()));
         System.out.println("  RGHC existe: " + verificarRghcExistente(request.getIdentificadorRghc()));
         System.out.println("  Usuário existe: " + verificarUsuarioExistente(request.getUsuario()));
+        System.out.println("  Email existe: " + verificarEmailExistente(request.getEmail()));
+        System.out.println("  Telefone existe: " + verificarTelefoneExistente(request.getTelefone()));
     }
 
     /**
@@ -153,7 +155,68 @@ public class AuthDAO {
     }
 
     /**
-     * Registra novo paciente com login - VERSÃO CORRIGIDA
+     * Verifica se email já está cadastrado
+     */
+    public boolean verificarEmailExistente(String email) {
+        String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE EMAIL_PACIENTE = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao verificar email existente", e);
+        }
+    }
+
+    /**
+     * Verifica se telefone já está cadastrado
+     */
+    public boolean verificarTelefoneExistente(String telefone) {
+        String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE TELEFONE_PACIENTE = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, telefone);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao verificar telefone existente", e);
+        }
+    }
+
+    /**
+     * Valida todos os dados antes do registro
+     */
+    public String validarDadosRegistro(RegistroPacienteRequest request) {
+        if (verificarCpfExistente(request.getCpfPaciente())) {
+            return "CPF já cadastrado no sistema";
+        }
+
+        if (verificarRghcExistente(request.getIdentificadorRghc())) {
+            return "RGHC já cadastrado no sistema";
+        }
+
+        if (verificarUsuarioExistente(request.getUsuario())) {
+            return "Nome de usuário já está em uso";
+        }
+
+        if (verificarEmailExistente(request.getEmail())) {
+            return "Email já cadastrado no sistema";
+        }
+
+        if (verificarTelefoneExistente(request.getTelefone())) {
+            return "Telefone já cadastrado no sistema";
+        }
+
+        return null; // Retorna null se todos os dados são válidos
+    }
+
+    /**
+     * Registra novo paciente com login - VERSÃO REFATORADA
      */
     public boolean registrarPaciente(RegistroPacienteRequest request) {
         Connection conn = null;
@@ -162,6 +225,15 @@ public class AuthDAO {
             conn.setAutoCommit(false);
 
             System.out.println("🔍 Iniciando registro do paciente...");
+
+            // Validação preventiva de dados
+            System.out.println("🔍 Validando dados do registro...");
+            String erroValidacao = validarDadosRegistro(request);
+            if (erroValidacao != null) {
+                System.out.println("❌ Validação falhou: " + erroValidacao);
+                throw new RuntimeException(erroValidacao);
+            }
+            System.out.println("✅ Dados validados com sucesso");
 
             // 1. Primeiro inserir o paciente (deixe o trigger gerar o ID)
             String sqlPaciente = "INSERT INTO TB_PATHMED_PACIENTE (IDENTIFICADOR_RGHC, CPF_PACIENTE, " +
@@ -207,13 +279,9 @@ public class AuthDAO {
                 int rowsContato = stmtContato.executeUpdate();
                 System.out.println("✅ Contato inserido. Linhas afetadas: " + rowsContato);
             } catch (SQLException e) {
-                if (e.getErrorCode() == 1) { // ORA-00001: unique constraint
-                    System.out.println("⚠️  Conflito na tabela de contato, verificando...");
-                    if (contatoPacienteExiste(conn, idPaciente)) {
-                        System.out.println("ℹ️  Contato já existe para este paciente, continuando...");
-                    } else {
-                        throw new RuntimeException("Erro inesperado ao inserir contato: " + e.getMessage(), e);
-                    }
+                // Tratamento adicional de segurança, mesmo após validação
+                if (e.getErrorCode() == 1) {
+                    tratarErroUnicidadeContato(conn, e, idPaciente, request.getEmail(), request.getTelefone());
                 } else {
                     throw e;
                 }
@@ -222,7 +290,7 @@ public class AuthDAO {
             // 4. Inserir login do paciente (sem ID - deixe o trigger gerar)
             String sqlLogin = "INSERT INTO TB_PATHMED_LOGIN_PACIENTE (ID_PACIENTE, " +
                     "USUARIO_LOGIN, SENHA_LOGIN, DATA_CRIACAO, ATIVO) " +
-                    "VALUES (?, ?, ?, SYSDATE, 'S')";
+                    "VALUES (?, ?, ?, CURRENT_TIMESTAMP, 'S')";
 
             System.out.println("🔍 Inserindo login do paciente...");
 
@@ -234,13 +302,8 @@ public class AuthDAO {
                 int rowsLogin = stmtLogin.executeUpdate();
                 System.out.println("✅ Login inserido. Linhas afetadas: " + rowsLogin);
             } catch (SQLException e) {
-                if (e.getErrorCode() == 1) { // ORA-00001: unique constraint
-                    System.out.println("⚠️  Conflito na tabela de login, verificando...");
-                    if (loginPacienteExiste(conn, idPaciente)) {
-                        System.out.println("ℹ️  Login já existe para este paciente, continuando...");
-                    } else {
-                        throw new RuntimeException("Erro inesperado ao inserir login: " + e.getMessage(), e);
-                    }
+                if (e.getErrorCode() == 1) {
+                    tratarErroUnicidadeLogin(conn, e, idPaciente, request.getUsuario());
                 } else {
                     throw e;
                 }
@@ -252,6 +315,7 @@ public class AuthDAO {
             System.out.println("   👤 Paciente: " + request.getNomePaciente());
             System.out.println("   🆔 ID: " + idPaciente);
             System.out.println("   📧 Email: " + request.getEmail());
+            System.out.println("   📞 Telefone: " + request.getTelefone());
             System.out.println("   👤 Usuário: " + request.getUsuario());
             return true;
 
@@ -297,28 +361,95 @@ public class AuthDAO {
         }
     }
 
-    // Método auxiliar para verificar se contato já existe
+    /**
+     * Trata erro de unicidade na tabela de contato
+     */
+    private void tratarErroUnicidadeContato(Connection conn, SQLException e, Long idPaciente, String email, String telefone)
+            throws SQLException {
+        System.out.println("⚠️  Conflito na tabela de contato, verificando...");
+
+        if (contatoPacienteExiste(conn, idPaciente)) {
+            System.out.println("ℹ️  Contato já existe para este paciente, continuando...");
+        } else if (telefonePacienteExiste(conn, telefone)) {
+            throw new RuntimeException("Telefone " + telefone + " já está em uso por outro paciente");
+        } else if (emailPacienteExiste(conn, email)) {
+            throw new RuntimeException("Email " + email + " já está em uso por outro paciente");
+        } else {
+            throw new RuntimeException("Erro inesperado ao inserir contato: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Trata erro de unicidade na tabela de login
+     */
+    private void tratarErroUnicidadeLogin(Connection conn, SQLException e, Long idPaciente, String usuario)
+            throws SQLException {
+        System.out.println("⚠️  Conflito na tabela de login, verificando...");
+
+        if (loginPacienteExiste(conn, idPaciente)) {
+            System.out.println("ℹ️  Login já existe para este paciente, continuando...");
+        } else if (usuarioLoginExiste(conn, usuario)) {
+            throw new RuntimeException("Usuário " + usuario + " já está em uso");
+        } else {
+            throw new RuntimeException("Erro inesperado ao inserir login: " + e.getMessage(), e);
+        }
+    }
+
+    // Métodos auxiliares para verificar existência
     private boolean contatoPacienteExiste(Connection conn, Long idPaciente) throws SQLException {
         String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE ID_PACIENTE = ?";
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, idPaciente);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }
         }
     }
 
-    // Método auxiliar para verificar se login já existe
     private boolean loginPacienteExiste(Connection conn, Long idPaciente) throws SQLException {
         String sql = "SELECT 1 FROM TB_PATHMED_LOGIN_PACIENTE WHERE ID_PACIENTE = ?";
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, idPaciente);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
+            }
+        }
+    }
+
+    private boolean telefonePacienteExiste(Connection conn, String telefone) throws SQLException {
+        String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE TELEFONE_PACIENTE = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, telefone);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private boolean emailPacienteExiste(Connection conn, String email) throws SQLException {
+        String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE EMAIL_PACIENTE = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private boolean usuarioLoginExiste(Connection conn, String usuario) throws SQLException {
+        String sqlPaciente = "SELECT 1 FROM TB_PATHMED_LOGIN_PACIENTE WHERE USUARIO_LOGIN = ?";
+        String sqlColaborador = "SELECT 1 FROM TB_PATHMED_LOGIN_COLABORADOR WHERE USUARIO_LOGIN = ?";
+
+        try (PreparedStatement stmtPaciente = conn.prepareStatement(sqlPaciente);
+             PreparedStatement stmtColaborador = conn.prepareStatement(sqlColaborador)) {
+
+            stmtPaciente.setString(1, usuario);
+            stmtColaborador.setString(1, usuario);
+
+            try (ResultSet rsPaciente = stmtPaciente.executeQuery();
+                 ResultSet rsColaborador = stmtColaborador.executeQuery()) {
+
+                return rsPaciente.next() || rsColaborador.next();
             }
         }
     }
@@ -326,10 +457,8 @@ public class AuthDAO {
     // Método auxiliar para obter o ID do paciente pelo CPF
     private Long obterIdPacientePorCpf(Connection conn, String cpf) throws SQLException {
         String sql = "SELECT ID_PACIENTE FROM TB_PATHMED_PACIENTE WHERE CPF_PACIENTE = ?";
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getLong("ID_PACIENTE");
