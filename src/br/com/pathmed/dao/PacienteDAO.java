@@ -64,18 +64,30 @@ public class PacienteDAO {
     }
 
     public void save(Paciente paciente) {
-        String sql = "INSERT INTO TB_PATHMED_PACIENTE (ID_PACIENTE, IDENTIFICADOR_RGHC, CPF_PACIENTE, NOME_PACIENTE, DATA_NASCIMENTO, TIPO_SANGUINEO) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TB_PATHMED_PACIENTE (IDENTIFICADOR_RGHC, CPF_PACIENTE, NOME_PACIENTE, DATA_NASCIMENTO, TIPO_SANGUINEO) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, paciente.getIdPaciente());
-            stmt.setString(2, paciente.getIdentificadorRghc());
-            stmt.setString(3, paciente.getCpfPaciente());
-            stmt.setString(4, paciente.getNomePaciente());
-            stmt.setDate(5, Date.valueOf(paciente.getDataNascimento()));
-            stmt.setString(6, paciente.getTipoSanguineo());
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.executeUpdate();
+            System.out.println("💾 Salvando paciente no banco...");
+            System.out.println("   RGHC: " + paciente.getIdentificadorRghc());
+            System.out.println("   CPF: " + paciente.getCpfPaciente());
+            System.out.println("   Nome: " + paciente.getNomePaciente());
+            System.out.println("   Data Nasc: " + paciente.getDataNascimento());
+            System.out.println("   Tipo Sanguíneo: " + paciente.getTipoSanguineo());
+
+            stmt.setString(1, paciente.getIdentificadorRghc());
+            stmt.setString(2, paciente.getCpfPaciente());
+            stmt.setString(3, paciente.getNomePaciente());
+            stmt.setDate(4, Date.valueOf(paciente.getDataNascimento()));
+            stmt.setString(5, paciente.getTipoSanguineo());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("✅ Linhas afetadas no INSERT: " + rowsAffected);
+
         } catch (SQLException e) {
+            System.err.println("❌ Erro ao salvar paciente: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Erro ao salvar paciente", e);
         }
     }

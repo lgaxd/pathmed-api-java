@@ -1,0 +1,25 @@
+meta {
+  name: Post Credenciais Paciente
+  type: http
+  seq: 14
+}
+
+post {
+  url: http://localhost:8080/auth/pacientes/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "identificadorRghc": "RGHC02139",
+    "cpfPaciente": "99233877766",
+    "nomePaciente": "John Teste ",
+    "dataNascimento": "1990-05-20",
+    "tipoSanguineo": "B+",
+    "email": "john.teste@email.com",
+    "telefone": "11999998328",
+    "usuario": "john.teste",
+    "senha": "minhasenha123"
+  }
+}

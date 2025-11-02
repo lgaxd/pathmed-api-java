@@ -1,0 +1,21 @@
+meta {
+  name: Post Paciente
+  type: http
+  seq: 11
+}
+
+post {
+  url: http://localhost:8080/pacientes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "identificadorRghc": "RGHC00012",
+    "cpfPaciente": "98765432100",
+    "nomePaciente": "Maria Oliveira Santos",
+    "dataNascimento": "1985-08-22",
+    "tipoSanguineo": "A+"
+  }
+}

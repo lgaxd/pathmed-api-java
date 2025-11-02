@@ -14,24 +14,34 @@ public class PacienteService {
         this.pacienteDAO = new PacienteDAO();
     }
 
-    public List<Paciente> listarTodosPacientes() {
-        return pacienteDAO.findAll();
-    }
-
+    // Mantém o método original para uso interno
     public Optional<Paciente> buscarPacientePorId(Long id) {
         return pacienteDAO.findById(id);
     }
 
-    public void cadastrarPaciente(Paciente paciente) {
+    // Novo método para uso no controller (retorna Paciente ou null)
+    public Paciente obterPacientePorId(Long id) {
+        return pacienteDAO.findById(id).orElse(null);
+    }
+
+    public List<Paciente> listarPacientes() {
+        return pacienteDAO.findAll();
+    }
+
+    public boolean cadastrarPaciente(Paciente paciente) {
+        // Verifica CPF nulo ou com tamanho inválido
         if (paciente.getCpfPaciente() == null || paciente.getCpfPaciente().length() != 11) {
-            throw new IllegalArgumentException("CPF inválido");
+            return false;
         }
 
+        // Verifica se já existe um paciente com o mesmo CPF
         if (pacienteDAO.findByCpf(paciente.getCpfPaciente()).isPresent()) {
-            throw new IllegalArgumentException("CPF já cadastrado");
+            return false;
         }
 
+        // Salva e retorna verdadeiro se tudo deu certo
         pacienteDAO.save(paciente);
+        return true;
     }
 
     public List<Paciente> buscarPacientesPorNome(String nome) {
@@ -42,11 +52,11 @@ public class PacienteService {
         return pacienteDAO.findByNome(nome);
     }
 
-    public boolean atualizarPaciente(Long id, Paciente pacienteAtualizado) {
+    public boolean atualizarPaciente(Paciente pacienteAtualizado) {
         // 1. Verificar se o paciente existe
-        Optional<Paciente> pacienteExistente = pacienteDAO.findById(id);
+        Optional<Paciente> pacienteExistente = pacienteDAO.findById(pacienteAtualizado.getIdPaciente());
         if (pacienteExistente.isEmpty()) {
-            throw new IllegalArgumentException("Paciente não encontrado com ID: " + id);
+            throw new IllegalArgumentException("Paciente não encontrado com ID: " + pacienteAtualizado.getIdPaciente());
         }
 
         // 2. Validar dados obrigatórios
@@ -56,7 +66,7 @@ public class PacienteService {
         Paciente pacienteAtual = pacienteExistente.get();
         if (!pacienteAtual.getCpfPaciente().equals(pacienteAtualizado.getCpfPaciente())) {
             Optional<Paciente> pacienteComCpf = pacienteDAO.findByCpf(pacienteAtualizado.getCpfPaciente());
-            if (pacienteComCpf.isPresent() && !pacienteComCpf.get().getIdPaciente().equals(id)) {
+            if (pacienteComCpf.isPresent() && !pacienteComCpf.get().getIdPaciente().equals(pacienteAtualizado.getIdPaciente())) {
                 throw new IllegalArgumentException("CPF já cadastrado para outro paciente");
             }
         }
@@ -64,13 +74,12 @@ public class PacienteService {
         // 4. Verificar se RGHC já existe em outro paciente (se foi alterado)
         if (!pacienteAtual.getIdentificadorRghc().equals(pacienteAtualizado.getIdentificadorRghc())) {
             Optional<Paciente> pacienteComRghc = pacienteDAO.findByIdentificadorRghc(pacienteAtualizado.getIdentificadorRghc());
-            if (pacienteComRghc.isPresent() && !pacienteComRghc.get().getIdPaciente().equals(id)) {
+            if (pacienteComRghc.isPresent() && !pacienteComRghc.get().getIdPaciente().equals(pacienteAtualizado.getIdPaciente())) {
                 throw new IllegalArgumentException("Identificador RGHC já cadastrado para outro paciente");
             }
         }
 
         // 5. Atualizar paciente
-        pacienteAtualizado.setIdPaciente(id);
         return pacienteDAO.update(pacienteAtualizado);
     }
 
@@ -102,5 +111,4 @@ public class PacienteService {
         String[] tiposValidos = {"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"};
         return Arrays.asList(tiposValidos).contains(tipoSanguineo);
     }
-
 }

@@ -1,0 +1,19 @@
+meta {
+  name: Post Auth Login
+  type: http
+  seq: 13
+}
+
+post {
+  url: http://localhost:8080/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "usuario": "admin",
+    "senha": "admin123",
+    "tipoUsuario": "colaborador"
+  }
+}
