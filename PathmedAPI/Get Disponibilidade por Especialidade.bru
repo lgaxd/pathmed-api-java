@@ -1,0 +1,15 @@
+meta {
+  name: Get Disponibilidade por Especialidade
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/agenda/disponibilidade?especialidade=3
+  body: none
+  auth: none
+}
+
+params:query {
+  especialidade: 3
+}

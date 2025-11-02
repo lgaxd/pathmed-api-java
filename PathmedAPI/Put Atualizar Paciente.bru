@@ -1,0 +1,26 @@
+meta {
+  name: Put Atualizar Paciente
+  type: http
+  seq: 9
+}
+
+put {
+  url: http://localhost:8080/pacientes/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "id": 1,
+    "identificadorRghc": "RGHC00123",
+    "cpfPaciente": "11122233344",
+    "nomePaciente": "Ana Silva",
+    "dataNascimento": "1985-03-15",
+    "tipoSanguineo": "A+"
+  }
+}

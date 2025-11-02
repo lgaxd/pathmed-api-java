@@ -1,18 +1,125 @@
-## Getting Started
+# PathMed API
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Licença](https://img.shields.io/badge/licença-MIT-green)
+![Status](https://img.shields.io/badge/status-desenvolvimento-blue)
 
-## Folder Structure
+Uma API RESTful para gerenciamento de consultas médicas e registros de pacientes do sistema de saúde PathMed.
 
-The workspace contains two folders by default, where:
+## 📋 Sumário
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#-tecnologias)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação](#-instalação)
+- [Endpoints da API](#-endpoints-da-api)
+- [Banco de Dados](#-banco-de-dados)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Como Contribuir](#-como-contribuir)
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+## ✨ Funcionalidades
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+- Gerenciamento e cadastro de pacientes
+- Agendamento de consultas médicas
+- Gestão de especialidades médicas
+- Gerenciamento de profissionais de saúde
+- Autenticação e autorização
+- Verificação de disponibilidade de consultas em tempo real
+- Acesso a registros médicos dos pacientes
 
-## Dependency Management
+## 🛠 Tecnologias
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- Java 17
+- Oracle Database
+- GSON para processamento de JSON
+- Servidor HTTP nativo do Java
+- Driver OracleJDBC
+
+## 📋 Pré-requisitos
+
+- Java JDK 17 ou superior
+- Instância do Oracle Database
+- Maven ou ferramenta de build similar
+- Git
+
+## 🚀 Instalação
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/yourusername/pathmed.git
+cd pathmed
+```
+
+2. Configure a conexão com o banco de dados em `DatabaseConnection.java`
+
+3. Compile o projeto:
+```bash
+javac -cp "lib/*" src/**/*.java -d bin/
+```
+
+4. Execute a aplicação:
+```bash
+java -cp "bin:lib/*" Main
+```
+
+O servidor iniciará na porta 8080 por padrão.
+
+## 📡 Endpoints da API
+
+### Autenticação
+- `POST /auth/login` - Autenticação de usuário
+- `POST /auth/pacientes/register` - Registro de paciente
+
+### Pacientes
+- `GET /pacientes` - Lista todos os pacientes
+- `GET /pacientes/{id}` - Obtém paciente por ID
+- `POST /pacientes` - Cria novo paciente
+- `PUT /pacientes/{id}` - Atualiza informações do paciente
+
+### Consultas
+- `GET /consultas` - Lista todas as consultas
+- `POST /consultas` - Agenda nova consulta
+- `PUT /consultas/status` - Atualiza status da consulta
+
+### Especialidades Médicas
+- `GET /especialidades` - Lista todas as especialidades
+- `GET /especialidades/disponibilidade` - Verifica disponibilidade por especialidade
+
+### Profissionais de Saúde
+- `GET /profissionais` - Lista todos os profissionais de saúde
+
+## 💾 Banco de Dados
+
+O sistema utiliza Oracle Database para persistência de dados. O esquema do banco inclui tabelas para:
+- Pacientes
+- Consultas
+- Especialidades Médicas
+- Profissionais de Saúde
+- Disponibilidade
+
+## 📁 Estrutura do Projeto
+
+```
+pathmed/
+├── src/
+│   ├── Main.java
+│   └── br/com/pathmed/
+│       ├── controller/    # Manipuladores de requisições HTTP
+│       ├── dao/          # Objetos de Acesso a Dados
+│       ├── model/        # Modelos de dados
+│       ├── service/      # Lógica de negócios
+│       └── util/         # Classes utilitárias
+├── lib/                  # Dependências externas
+├── bin/                  # Classes compiladas
+└── PathmedAPI/           # Documentação da API
+```
+
+## 👥 Autores
+
+- Lucas Grillo AlcÂntara - RM 561413
+- Augusto Buguas Rodrigues - RM 563858
+- Pietro Abrahamian - RM 561469
+
+---
+
+Feito com ❤️ pela Equipe PathMed

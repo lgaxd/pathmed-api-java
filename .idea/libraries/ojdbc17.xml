@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="ojdbc17">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/ojdbc17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.13.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

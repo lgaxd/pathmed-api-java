@@ -1,0 +1,15 @@
+meta {
+  name: Get Consultas por Paciente
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8080/consultas/paciente/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 8
+}
