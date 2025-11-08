@@ -21,7 +21,6 @@ public class PacienteController {
     }
 
     public void handlePacientes(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         switch (exchange.getRequestMethod()) {
             case "GET":
@@ -36,7 +35,6 @@ public class PacienteController {
     }
 
     public void handlePacienteById(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         Long id = ApiServer.extractIdFromPath(exchange.getRequestURI().getPath());
         if (id == null) {

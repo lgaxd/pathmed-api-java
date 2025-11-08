@@ -17,7 +17,6 @@ public class ProfissionalController {
     }
 
     public void handleProfissionais(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         if ("GET".equals(exchange.getRequestMethod())) {
             handleGetProfissionais(exchange);

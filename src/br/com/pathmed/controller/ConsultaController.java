@@ -21,7 +21,6 @@ public class ConsultaController {
     }
 
     public void handleConsultas(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         switch (exchange.getRequestMethod()) {
             case "GET":
@@ -36,7 +35,6 @@ public class ConsultaController {
     }
 
     public void handleConsultaActions(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         String path = exchange.getRequestURI().getPath();
 
