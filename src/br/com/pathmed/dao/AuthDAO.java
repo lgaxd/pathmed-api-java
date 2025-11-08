@@ -7,11 +7,6 @@ import br.com.pathmed.util.DatabaseConnection;
 import java.sql.*;
 
 public class AuthDAO {
-    private Connection connection;
-
-    public AuthDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
 
     public void debugRegistroPaciente(RegistroPacienteRequest request) {
         System.out.println("🔍 DEBUG - Dados do registro:");
@@ -37,6 +32,7 @@ public class AuthDAO {
      * Realiza login de paciente
      */
     public LoginResponse loginPaciente(LoginRequest loginRequest) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT lp.ID_LOGIN_PACIENTE, lp.ID_PACIENTE, p.NOME_PACIENTE, lp.USUARIO_LOGIN " +
                 "FROM TB_PATHMED_LOGIN_PACIENTE lp " +
                 "JOIN TB_PATHMED_PACIENTE p ON lp.ID_PACIENTE = p.ID_PACIENTE " +
@@ -68,6 +64,7 @@ public class AuthDAO {
      * Realiza login de colaborador
      */
     public LoginResponse loginColaborador(LoginRequest loginRequest) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT lc.ID_LOGIN_COLABORADOR, lc.ID_COLABORADOR, c.NOME_COLABORADOR, lc.USUARIO_LOGIN " +
                 "FROM TB_PATHMED_LOGIN_COLABORADOR lc " +
                 "JOIN TB_PATHMED_COLABORADOR c ON lc.ID_COLABORADOR = c.ID_COLABORADOR " +
@@ -99,6 +96,7 @@ public class AuthDAO {
      * Verifica se usuário já existe
      */
     public boolean verificarUsuarioExistente(String usuario) {
+        Connection connection = DatabaseConnection.getConnection();
         String sqlPaciente = "SELECT 1 FROM TB_PATHMED_LOGIN_PACIENTE WHERE USUARIO_LOGIN = ?";
         String sqlColaborador = "SELECT 1 FROM TB_PATHMED_LOGIN_COLABORADOR WHERE USUARIO_LOGIN = ?";
 
@@ -124,6 +122,7 @@ public class AuthDAO {
      * Verifica se CPF já está cadastrado
      */
     public boolean verificarCpfExistente(String cpf) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT 1 FROM TB_PATHMED_PACIENTE WHERE CPF_PACIENTE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -141,6 +140,7 @@ public class AuthDAO {
      * Verifica se RGHC já está cadastrado
      */
     public boolean verificarRghcExistente(String rghc) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT 1 FROM TB_PATHMED_PACIENTE WHERE IDENTIFICADOR_RGHC = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -158,6 +158,7 @@ public class AuthDAO {
      * Verifica se email já está cadastrado
      */
     public boolean verificarEmailExistente(String email) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE EMAIL_PACIENTE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -175,6 +176,7 @@ public class AuthDAO {
      * Verifica se telefone já está cadastrado
      */
     public boolean verificarTelefoneExistente(String telefone) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT 1 FROM TB_PATHMED_CONTATO_PACIENTE WHERE TELEFONE_PACIENTE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

@@ -8,14 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class EspecialidadeDAO {
-    private Connection connection;
-
-    public EspecialidadeDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
 
     // Listar todas as especialidades
     public List<Especialidade> findAll() {
+        Connection connection = DatabaseConnection.getConnection();
         List<Especialidade> especialidades = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_ESPECIALIDADE ORDER BY DESCRICAO_ESPECIALIDADE";
 
@@ -37,6 +33,7 @@ public class EspecialidadeDAO {
 
     // Buscar especialidade por ID
     public Optional<Especialidade> findById(Long id) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_ESPECIALIDADE WHERE ID_ESPECIALIDADE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

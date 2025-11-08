@@ -10,12 +10,6 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class DisponibilidadeDAO {
-    private Connection connection;
-
-    public DisponibilidadeDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
-
     /**
      * Busca disponibilidade para um dia e especialidade específicos
      * Retorna todos os horários de 30min das 8:00 às 18:00 com profissionais disponíveis
@@ -61,6 +55,7 @@ public class DisponibilidadeDAO {
      * Busca profissionais disponíveis em um horário específico
      */
     private List<ProfissionalResumido> findProfissionaisDisponiveisNoHorario(LocalDateTime dataHora, Long idEspecialidade) {
+        Connection connection = DatabaseConnection.getConnection();
         List<ProfissionalResumido> profissionais = new ArrayList<>();
 
         String sql = "SELECT ps.ID_PROFISSIONAL, ps.NOME_PROFISSIONAL_SAUDE, e.DESCRICAO_ESPECIALIDADE " +
@@ -101,6 +96,7 @@ public class DisponibilidadeDAO {
      * Busca nome da especialidade por ID
      */
     private String findNomeEspecialidadeById(Long idEspecialidade) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT DESCRICAO_ESPECIALIDADE FROM TB_PATHMED_ESPECIALIDADE WHERE ID_ESPECIALIDADE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -123,6 +119,7 @@ public class DisponibilidadeDAO {
      * (Útil para o calendário do front-end mostrar quais dias têm horários disponíveis)
      */
     public List<LocalDate> findDiasComDisponibilidade(Long idEspecialidade, int diasNoFuturo) {
+        Connection connection = DatabaseConnection.getConnection();
         List<LocalDate> diasDisponiveis = new ArrayList<>();
         LocalDate dataInicio = LocalDate.now();
         LocalDate dataFim = dataInicio.plusDays(diasNoFuturo);

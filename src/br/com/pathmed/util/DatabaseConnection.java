@@ -3,8 +3,14 @@ package br.com.pathmed.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseConnection {
+
+    private static final Logger logger = Logger.getLogger(DatabaseConnection.class.getName());
+
+    private static Connection conn = null;
 
     private static final String URL = System.getenv("DB_URL");
     private static final String USER = System.getenv("DB_USER");
@@ -12,15 +18,14 @@ public class DatabaseConnection {
 
     public static Connection getConnection() {
 
-        Connection conn = null;
-
         try {
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Conectado ao Banco de Dados (Oracle)!");
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                logger.log(Level.FINE,"Conectado ao Banco de Dados (Oracle)!");
+            }
 
         } catch (SQLException e) {
-            System.err.println("Falha na conexão com o Banco de Dados\nVerifique seus dados...");
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Falha na conexão com o Banco de Dados\nVerifique seus dados...", e);
         }
         return conn;
     }

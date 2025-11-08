@@ -4,11 +4,14 @@ import br.com.pathmed.service.ProfissionalService;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProfissionalController {
     private ProfissionalService profissionalService;
     private ApiServer apiServer;
     private Gson gson;
+    private static final Logger logger = Logger.getLogger(AgendaController.class.getName());
 
     public ProfissionalController(ApiServer apiServer) {
         this.profissionalService = new ProfissionalService();
@@ -30,6 +33,7 @@ public class ProfissionalController {
             var profissionais = profissionalService.listarTodosProfissionais();
             apiServer.sendJsonResponse(exchange, 200, gson.toJson(profissionais));
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao listar profissionais: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }

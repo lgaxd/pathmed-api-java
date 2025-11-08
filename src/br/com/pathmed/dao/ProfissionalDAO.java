@@ -8,14 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProfissionalDAO {
-    private Connection connection;
-
-    public ProfissionalDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
 
     // GET /profissionais - Listar todos os profissionais
     public List<Profissional> findAll() {
+        Connection connection = DatabaseConnection.getConnection();
         List<Profissional> profissionais = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_PROFISSIONAL_SAUDE ORDER BY NOME_PROFISSIONAL_SAUDE";
 
@@ -34,6 +30,7 @@ public class ProfissionalDAO {
 
     // Buscar profissional por ID
     public Optional<Profissional> findById(Long id) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_PROFISSIONAL_SAUDE WHERE ID_PROFISSIONAL = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -53,6 +50,7 @@ public class ProfissionalDAO {
 
     // Buscar profissionais por especialidade
     public List<Profissional> findByEspecialidade(Long especialidadeId) {
+        Connection connection = DatabaseConnection.getConnection();
         List<Profissional> profissionais = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_PROFISSIONAL_SAUDE WHERE ID_ESPECIALIDADE = ? ORDER BY NOME_PROFISSIONAL_SAUDE";
 
@@ -73,6 +71,7 @@ public class ProfissionalDAO {
 
     // Buscar profissional por CPF
     public Optional<Profissional> findByCpf(String cpf) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_PROFISSIONAL_SAUDE WHERE CPF_PROFISSIONAL = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -92,6 +91,7 @@ public class ProfissionalDAO {
 
     // Buscar profissionais por nome (busca parcial)
     public List<Profissional> findByNome(String nome) {
+        Connection connection = DatabaseConnection.getConnection();
         List<Profissional> profissionais = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_PROFISSIONAL_SAUDE WHERE UPPER(NOME_PROFISSIONAL_SAUDE) LIKE UPPER(?) ORDER BY NOME_PROFISSIONAL_SAUDE";
 

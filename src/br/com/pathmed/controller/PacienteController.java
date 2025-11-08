@@ -8,11 +8,14 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PacienteController {
     private PacienteService pacienteService;
     private ApiServer apiServer;
     private Gson gson;
+    private static final Logger logger = Logger.getLogger(AgendaController.class.getName());
 
     public PacienteController(ApiServer apiServer) {
         this.pacienteService = new PacienteService();
@@ -59,6 +62,7 @@ public class PacienteController {
             List<Paciente> pacientes = pacienteService.listarPacientes();
             apiServer.sendJsonResponse(exchange, 200, gson.toJson(pacientes));
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao listar pacientes: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -79,6 +83,7 @@ public class PacienteController {
                 apiServer.sendJsonResponse(exchange, 400, response);
             }
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new SimpleResponse(false, "Erro interno: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -94,6 +99,7 @@ public class PacienteController {
                 apiServer.sendJsonResponse(exchange, 404, "{\"error\": \"Paciente não encontrado\"}");
             }
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao buscar paciente: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -115,6 +121,7 @@ public class PacienteController {
                 apiServer.sendJsonResponse(exchange, 400, response);
             }
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new SimpleResponse(false, "Erro interno: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }

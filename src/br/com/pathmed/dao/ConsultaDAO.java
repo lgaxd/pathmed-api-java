@@ -9,14 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class ConsultaDAO {
-    private Connection connection;
-
-    public ConsultaDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
 
     // GET /consultas - Listar todas as consultas
     public List<Consulta> findAll() {
+        Connection connection = DatabaseConnection.getConnection();
         List<Consulta> consultas = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_TELECONSULTA ORDER BY DATA_HORA_CONSULTA DESC";
 
@@ -35,6 +31,7 @@ public class ConsultaDAO {
 
     // GET /consultas/{id} - Buscar consulta por ID
     public Optional<Consulta> findById(Long id) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_TELECONSULTA WHERE ID_CONSULTA = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -54,6 +51,7 @@ public class ConsultaDAO {
 
     // GET /consultas/paciente/{id} - Consultas por paciente
     public List<Consulta> findByPacienteId(Long pacienteId) {
+        Connection connection = DatabaseConnection.getConnection();
         List<Consulta> consultas = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_TELECONSULTA WHERE ID_PACIENTE = ? ORDER BY DATA_HORA_CONSULTA DESC";
 
@@ -102,6 +100,7 @@ public class ConsultaDAO {
 
     // PUT /consultas/{id}/status - Atualizar status da consulta
     public boolean updateStatus(Long consultaId, Long novoStatusId) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "UPDATE TB_PATHMED_TELECONSULTA SET ID_STATUS = ? WHERE ID_CONSULTA = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -129,6 +128,7 @@ public class ConsultaDAO {
 
     // Método para verificar conflito de horário
     public boolean existsConflitoHorario(Long profissionalId, LocalDateTime dataHora) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT COUNT(*) FROM TB_PATHMED_TELECONSULTA " +
                 "WHERE ID_PROFISSIONAL = ? " +
                 "AND ID_STATUS IN (1, 2, 3) " + // Agendada, Confirmada, Em Andamento

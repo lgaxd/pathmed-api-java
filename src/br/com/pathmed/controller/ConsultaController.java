@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConsultaController {
     private ConsultaService consultaService;
     private ApiServer apiServer;
     private Gson gson;
+    private static final Logger logger = Logger.getLogger(AgendaController.class.getName());
 
     public ConsultaController(ApiServer apiServer) {
         this.consultaService = new ConsultaService();
@@ -76,6 +79,7 @@ public class ConsultaController {
             List<Consulta> consultas = consultaService.listarTodasConsultas();
             apiServer.sendJsonResponse(exchange, 200, gson.toJson(consultas));
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao listar consultas: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -96,6 +100,7 @@ public class ConsultaController {
                 apiServer.sendJsonResponse(exchange, 400, response);
             }
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new SimpleResponse(false, "Erro interno: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -118,6 +123,7 @@ public class ConsultaController {
                 apiServer.sendJsonResponse(exchange, 400, response);
             }
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new SimpleResponse(false, "Erro interno: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -128,6 +134,7 @@ public class ConsultaController {
             List<Consulta> consultas = consultaService.buscarConsultasPorPaciente(pacienteId);
             apiServer.sendJsonResponse(exchange, 200, gson.toJson(consultas));
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao buscar consultas do paciente: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
