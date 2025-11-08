@@ -9,13 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class PacienteDAO {
-    private Connection connection;
-
-    public PacienteDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
 
     public List<Paciente> findAll() {
+        Connection connection = DatabaseConnection.getConnection();
         List<Paciente> pacientes = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_PACIENTE";
 
@@ -40,6 +36,7 @@ public class PacienteDAO {
     }
 
     public Optional<Paciente> findById(Long id) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_PACIENTE WHERE ID_PACIENTE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -93,6 +90,7 @@ public class PacienteDAO {
     }
 
     public List<Paciente> findByNome(String nome) {
+        Connection connection = DatabaseConnection.getConnection();
         List<Paciente> pacientes = new ArrayList<>();
         String sql = "SELECT * FROM TB_PATHMED_PACIENTE WHERE UPPER(NOME_PACIENTE) LIKE UPPER(?)";
 
@@ -119,6 +117,7 @@ public class PacienteDAO {
     }
 
     public boolean update(Paciente paciente) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "UPDATE TB_PATHMED_PACIENTE SET IDENTIFICADOR_RGHC = ?, CPF_PACIENTE = ?, " +
                 "NOME_PACIENTE = ?, DATA_NASCIMENTO = ?, TIPO_SANGUINEO = ? " +
                 "WHERE ID_PACIENTE = ?";
@@ -140,6 +139,7 @@ public class PacienteDAO {
     }
 
     public Optional<Paciente> findByIdentificadorRghc(String identificadorRghc) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_PACIENTE WHERE IDENTIFICADOR_RGHC = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -165,6 +165,7 @@ public class PacienteDAO {
     }
 
     public Optional<Paciente> findByCpf(String cpf) {
+        Connection connection = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM TB_PATHMED_PACIENTE WHERE CPF_PACIENTE = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
