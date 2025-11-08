@@ -1,15 +1,14 @@
 # ====================================================================
 # ESTÁGIO 1: BUILD (Compilação)
-# Usando a tag '17-slim' para garantir que a imagem seja encontrada.
+# Usando a tag JDK 17 oficial do Maven para compilar.
 # ====================================================================
-FROM maven:3.8.7-openjdk-17-slim AS build
+FROM maven:3.8.7-jdk-17 AS build
 
 # Define o diretório de trabalho no container
 WORKDIR /app
 
 # Copia e baixa dependências
 COPY pom.xml .
-# Assumindo que você usa Maven. Se usa Gradle, mude o comando.
 RUN mvn dependency:go-offline
 
 # Copia todo o restante do código-fonte
@@ -19,15 +18,15 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # ====================================================================
-# ESTÁGIO 2: RUNTIME (Execução)
-# Usando '17-jre-slim-bullseye' que é a tag JRE minimalista e correta.
+# ESTÁGIO 2: RUNTIME (Execução) - RECOMENDADO
+# Usando Eclipse Temurin JRE 17 com Alpine: Imagem muito leve, segura e confiável.
 # ====================================================================
-FROM openjdk:17-jre-slim-bullseye
+FROM eclipse-temurin:17-jre-alpine
 
 # Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o JAR compilado
+# Copia o JAR compilado do estágio 'build'
 COPY --from=build /app/target/*.jar /app/app.jar
 
 # Expõe a porta (padrão Spring Boot)
