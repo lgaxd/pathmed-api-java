@@ -17,7 +17,6 @@ public class EspecialidadeController {
     }
 
     public void handleEspecialidades(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         if ("GET".equals(exchange.getRequestMethod())) {
             handleGetEspecialidades(exchange);

@@ -20,7 +20,6 @@ public class AgendaController {
     }
 
     public void handleDisponibilidade(HttpExchange exchange) throws IOException {
-        apiServer.setupCorsHeaders(exchange);
 
         if ("GET".equals(exchange.getRequestMethod())) {
             handleGetDisponibilidade(exchange);

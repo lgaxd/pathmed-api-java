@@ -46,7 +46,6 @@ public class AuthController {
 
     public void handleRegister(HttpExchange exchange) throws IOException {
         System.out.println("handleRegister chamado");
-        apiServer.setupCorsHeaders(exchange);
 
         if (!"POST".equals(exchange.getRequestMethod())) {
             apiServer.sendJsonResponse(exchange, 405, "{\"error\": \"Método não permitido\"}");
