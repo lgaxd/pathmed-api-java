@@ -8,11 +8,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AuthController {
     private AuthService authService;
     private ApiServer apiServer;
     private Gson gson;
+    private static final Logger logger = Logger.getLogger(AgendaController.class.getName());
 
     public AuthController(ApiServer apiServer) {
         this.authService = new AuthService();
@@ -39,6 +42,7 @@ public class AuthController {
             }
 
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro interno no servidor: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
@@ -74,6 +78,7 @@ public class AuthController {
             apiServer.sendJsonResponse(exchange, 400, "{\"error\": \"JSON inválido: " + e.getMessage() + "\"}");
         } catch (Exception e) {
             // Outros erros
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro no registro: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }

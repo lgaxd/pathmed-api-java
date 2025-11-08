@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AgendaController {
     private DisponibilidadeService disponibilidadeService;
     private ApiServer apiServer;
     private Gson gson;
+    private static final Logger logger = Logger.getLogger(AgendaController.class.getName());
 
     public AgendaController(ApiServer apiServer) {
         this.disponibilidadeService = new DisponibilidadeService();
@@ -79,6 +82,7 @@ public class AgendaController {
         } catch (IllegalArgumentException e) {
             apiServer.sendJsonResponse(exchange, 400, "{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao buscar disponibilidade", e);
             String errorResponse = gson.toJson(new ErrorResponse("Erro ao buscar disponibilidade: " + e.getMessage()));
             apiServer.sendJsonResponse(exchange, 500, errorResponse);
         }
