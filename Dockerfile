@@ -1,44 +1,37 @@
 # ====================================================================
 # ESTÁGIO 1: BUILD (Compilação)
-# Utiliza uma imagem com JDK e Maven (assumindo que o projeto usa Maven)
-# para compilar o código.
+# Usando a tag '17-slim' para garantir que a imagem seja encontrada.
 # ====================================================================
-FROM maven:3.8.7-openjdk-17 AS build
+FROM maven:3.8.7-openjdk-17-slim AS build
 
 # Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o arquivo de configuração do build (ex: pom.xml ou build.gradle)
-# e baixa as dependências. Isso otimiza o cache do Docker.
-# *Assuma que o seu build está na raiz (pom.xml)*.
+# Copia e baixa dependências
 COPY pom.xml .
-# O comando a seguir falhará se você não usar Maven.
-# Adapte para 'gradle clean build --no-daemon' se usar Gradle.
+# Assumindo que você usa Maven. Se usa Gradle, mude o comando.
 RUN mvn dependency:go-offline
 
 # Copia todo o restante do código-fonte
 COPY . .
 
-# Compila o projeto e gera o JAR/WAR final
-# O -DskipTests é para builds mais rápidos no container.
+# Compila o projeto e gera o JAR
 RUN mvn clean package -DskipTests
 
 # ====================================================================
 # ESTÁGIO 2: RUNTIME (Execução)
-# Utiliza uma imagem JRE minimalista para rodar a aplicação compilada.
+# Usando '17-jre-slim-bullseye' que é a tag JRE minimalista e correta.
 # ====================================================================
-FROM openjdk:17-jre-slim
+FROM openjdk:17-jre-slim-bullseye
 
 # Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o JAR compilado do estágio 'build' para o estágio 'runtime'.
-# Assumimos que o JAR é gerado em 'target/' e o renomeamos para 'app.jar'.
-# O nome original deve ser 'PathmedAPI' ou similar.
+# Copia o JAR compilado
 COPY --from=build /app/target/*.jar /app/app.jar
 
-# Expõe a porta que a sua API utiliza. A porta 8080 é o padrão para muitas APIs Java.
+# Expõe a porta (padrão Spring Boot)
 EXPOSE 8080
 
-# Comando de execução da aplicação
+# Comando de execução, compatível com a variável $PORT do Render
 ENTRYPOINT ["java", "-jar", "app.jar"]
