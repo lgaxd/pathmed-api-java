@@ -78,6 +78,7 @@ O servidor iniciará na porta 8080 por padrão.
 
 ### Consultas
 - `GET /consultas` - Lista todas as consultas
+- `GET /consultas/paciente/{id}` - Lista todas as consultas de um paciente
 - `POST /consultas` - Agenda nova consulta
 - `PUT /consultas/status` - Atualiza status da consulta
 
