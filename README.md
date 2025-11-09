@@ -42,28 +42,6 @@ Uma API RESTful para gerenciamento de consultas médicas e registros de paciente
 - Maven ou ferramenta de build similar
 - Git
 
-## 🚀 Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/yourusername/pathmed.git
-cd pathmed
-```
-
-2. Configure a conexão com o banco de dados em `DatabaseConnection.java`
-
-3. Compile o projeto:
-```bash
-javac -cp "lib/*" src/**/*.java -d bin/
-```
-
-4. Execute a aplicação:
-```bash
-java -cp "bin:lib/*" Main
-```
-
-O servidor iniciará na porta 8080 por padrão.
-
 ## 📡 Endpoints da API
 
 ### Autenticação
