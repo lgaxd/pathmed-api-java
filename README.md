@@ -11,7 +11,6 @@ Uma API RESTful para gerenciamento de consultas médicas e registros de paciente
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias](#-tecnologias)
 - [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
 - [Endpoints da API](#-endpoints-da-api)
 - [Banco de Dados](#-banco-de-dados)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
