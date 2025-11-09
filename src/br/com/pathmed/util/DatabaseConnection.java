@@ -19,7 +19,7 @@ public class DatabaseConnection {
     public static Connection getConnection() {
 
         try {
-            if (conn == null || conn.isClosed()) {
+            if (conn == null || !conn.isValid(1)) {
                 conn = DriverManager.getConnection(URL, USER, PASSWORD);
                 logger.log(Level.FINE,"Conectado ao Banco de Dados (Oracle)!");
             }
