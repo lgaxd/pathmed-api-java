@@ -33,6 +33,7 @@ Uma API RESTful para gerenciamento de consultas médicas e registros de paciente
 - GSON para processamento de JSON
 - Servidor HTTP nativo do Java
 - Driver OracleJDBC
+- Bruno para testes de requisições
 
 ## 📋 Pré-requisitos
 
